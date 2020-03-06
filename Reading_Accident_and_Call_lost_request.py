@@ -21,11 +21,11 @@ GPIO.setup(24, GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
 
 from twilio.rest import Client
-client = Client("AC9cb5f8563281d435bce485a9f70d9de6", "b29d6bd95d81f8831c63aac5dfe281cf")
+client = Client("Ahdfhsdhfhdgsfsdde6", "b2hdhahsdasdac5dfe281cf")
 
-mydbUrl='https://mapapp-91a9f.firebaseio.com'
+mydbUrl='https://mapapp-632423948.firebaseio.com'
 
-cred = credentials.Certificate('mapapp-91a9f-firebase-adminsdk-pr11y-97d1466a1d.json')
+cred = credentials.Certificate('mapapp-91a9f-firebase-adminsdk-pr11y-7637428734.json')
 
 firebase_admin.initialize_app(cred, {
     'databaseURL': mydbUrl
