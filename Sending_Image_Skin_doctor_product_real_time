@@ -1,0 +1,48 @@
+#!/usr/bin/env python
+# -*- coding: cp1252 -*-
+import socket
+import os
+import base64
+from socket import AF_INET, SOCK_STREAM
+HOST = '' 
+PORT = 8080
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+s.bind((HOST, PORT))
+s.listen(PORT)
+while True:
+    print('listening to client...')
+    conn, addr = s.accept()
+    data=conn.recv(1024)
+    img=data
+    while (data): #this while is use to recieve data while the whole string is not recieved
+        print("Receiving...")
+        data = conn.recv(1024)
+        img = img+data;
+        if data.endswith(b'|0|0|0'): # for 2.7 python data.endswith("|0|0|0") #this is to check end of base64 string
+            break
+    print(img)
+    parseData=img.split(b'|')  # for 2.7 python img.split("|")
+    b64_string=parseData[0]
+    b64_string  += b'=' * ((4 - len(b64_string) % 4) % 4)  # for python 2.7 remove b before string
+    imgpic = base64.b64decode(b64_string)
+    
+    
+    filename = 'analyze_image.jpg' # Everytime it overwrites in Pi when passing the image from Mobile phone (Android App)
+    
+    
+    with open(filename, 'wb') as f:
+        f.write(imgpic)
+        f.close
+        
+    
+    
+    #here you call your image testing python script and then return the result in reply variable
+    
+    
+    
+    
+    
+    reply="eczema|cure is to take bath properly"
+    conn.sendall(reply.encode())
+    conn.close()
