@@ -1,0 +1,81 @@
+#!/usr/bin/env python
+# -*- coding: cp1252 -*-
+import socket
+import os
+from socket import AF_INET, SOCK_STREAM
+HOST = '' 
+PORT = 8080
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+s.bind((HOST, PORT))
+s.listen(PORT)
+while True:
+    print('listening to client...')
+    conn, addr = s.accept()
+    data=conn.recv(1024)
+    print(data)
+    parseData=data.split("|")
+    if (parseData[0]=="forward"):
+        reply="forward"
+        conn.sendall(reply.encode())
+        conn.close()
+        #coding for forward button goes here
+    elif(parseData[0]=="back"):
+        reply="back"
+        conn.sendall(reply.encode())
+        conn.close()
+        #coding for back button goes here
+    elif(parseData[0]=="left"):
+        reply="left"
+        conn.sendall(reply.encode())
+        conn.close()
+        #coding for left button goes here
+    elif(parseData[0]=="right"):
+        reply="right"
+        conn.sendall(reply.encode())
+        conn.close()
+        #coding for right button goes here
+    elif(parseData[0]=="stop"):
+        reply="stop"
+        conn.sendall(reply.encode())
+        conn.close()
+        #coding for stop button goes here
+    elif(parseData[0]=="camera"):
+        #coding for getting the ip for camera goes here and return it in reply variable
+        reply="http://192.168.43.173:8083" #this reply variable needs to be changed with camera 1 ip
+        conn.sendall(reply.encode())
+        conn.close()
+    elif(parseData[0]=="MoveCameraToLeft"):
+        reply="cameraLeft"
+        conn.sendall(reply.encode())
+        conn.close()
+        #coding for moving camera left goes here
+    elif(parseData[0]=="MoveCameraToMiddle"):
+        reply="cameraMiddle"
+        conn.sendall(reply.encode())
+        conn.close()
+        #coding for moving camera middle goes here
+    elif(parseData[0]=="MoveCameraToRight"):
+        reply="cameraRight"
+        conn.sendall(reply.encode())
+        conn.close()
+        #coding for moving camera right goes here
+    elif(parseData[0]=="MoveGunToLeft"):
+        reply="gunLeft"
+        conn.sendall(reply.encode())
+        conn.close()
+        #coding for moving gun left goes here
+    elif(parseData[0]=="MoveGunToMiddle"):
+        reply="gunMiddle"
+        conn.sendall(reply.encode())
+        conn.close()
+        #coding for moving gun middle goes here
+    elif(parseData[0]=="MoveGunToRight"):
+        reply="gunRight"
+        conn.sendall(reply.encode())
+        conn.close()
+        #coding for moving gun right goes here
+
+
+
+    
