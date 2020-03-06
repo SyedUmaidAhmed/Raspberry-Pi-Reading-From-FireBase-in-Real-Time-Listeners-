@@ -1,0 +1,180 @@
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+
+
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import db
+import RPi.GPIO as GPIO
+import os
+import sys
+from time import sleep
+
+Relay_channel = [14, 15, 18, 23, 24, 25, 8, 7, 1]
+GPIO.setmode(GPIO.BCM)
+GPIO.setwarnings(False)
+GPIO.setup(Relay_channel, GPIO.OUT, initial=GPIO.HIGH)
+
+myTrack_Id='78643326'     #your desired trackID which you alot to particular user to listen from
+video_url='https://drive.google.com/drive/folders/1ze4lWN1F-zojhhdasjdkjksadhp6QdsJcP9' #Video URL
+
+
+signal_headlight=signal_ac=signal_ignition=signal_machine=signal_door=signal_wiper=signal_fuel=signal_indicator=videos_url=''
+mydbUrl='https://blackboxcariot.firebaseio.com/'
+isFirst=True
+
+
+# Fetch the service account key JSON file contents
+cred = credentials.Certificate('blackboxcarKey.json')
+# Initialize the app with a service account, granting admin privileges
+firebase_admin.initialize_app(cred, {
+    'databaseURL': mydbUrl21
+})
+
+primaryKey=''
+ref = db.reference('USERS')
+snapshot = ref.order_by_child('track_Id').equal_to(myTrack_Id).get()
+for value in snapshot.items():
+    primaryKey=value[0]
+    #print('\n\n\t{0}'.format(value[1]['mosque_name']))
+
+ref_url = db.reference('USERS/'+primaryKey)
+ref_url.child('userDeviceSignals').child('videos_url').set(video_url)
+
+
+def listener(event):
+    ref2 = db.reference('USERS/'+primaryKey)
+    snapshot = ref2.get()
+    global isFirst,signal_headlight,signal_ac,signal_ignition,signal_machine,signal_door,signal_wiper,signal_fuel,signal_indicator,videos_url
+    if(isFirst==True):
+        signal_headlight=snapshot['userDeviceSignals']['signal_headlight']
+        signal_ac=snapshot['userDeviceSignals']['signal_ac']
+        signal_ignition=snapshot['userDeviceSignals']['signal_ignition']
+        signal_machine=snapshot['userDeviceSignals']['signal_machine']
+        signal_door=snapshot['userDeviceSignals']['signal_door']
+        signal_wiper=snapshot['userDeviceSignals']['signal_wiper']
+        signal_fuel=snapshot['userDeviceSignals']['signal_fuel']
+        signal_indicator=snapshot['userDeviceSignals']['signal_indicator']
+        videos_url=snapshot['userDeviceSignals']['videos_url']
+        isFirst=False
+    else:
+        if(signal_headlight!=snapshot['userDeviceSignals']['signal_headlight']):
+            signal_headlight=snapshot['userDeviceSignals']['signal_headlight']
+            if(signal_headlight=='on'):
+                #print('\nheadlight on')
+                GPIO.output(Relay_channel[0], GPIO.LOW)
+                #do here whatever you want for signal 1 on
+            else:
+                #print('\nheadlight off')
+                GPIO.output(Relay_channel[0], GPIO.HIGH)
+
+                #do here whatever you want for signal 1 off
+
+        if(signal_ac!=snapshot['userDeviceSignals']['signal_ac']):
+            signal_ac=snapshot['userDeviceSignals']['signal_ac']
+            if(signal_ac=='on'):
+                #do here whatever you want for signal 2 on
+                GPIO.output(Relay_channel[1], GPIO.LOW)
+            else:
+                #print('\nAC off')
+                GPIO.output(Relay_channel[1], GPIO.HIGH)
+                #do here whatever you want for signal 2 off
+
+        if(signal_ignition!=snapshot['userDeviceSignals']['signal_ignition']):
+            signal_ignition=snapshot['userDeviceSignals']['signal_ignition']
+            if(signal_ignition=='on'):
+                #print('\nIgnintion on')
+                GPIO.output(Relay_channel[2], GPIO.LOW)
+
+                #do here whatever you want for signal 3 on
+            else:
+                #print('\nIgnintion off')
+                GPIO.output(Relay_channel[2], GPIO.HIGH)
+
+                #do here whatever you want for signal 3 off
+
+        if(signal_machine!=snapshot['userDeviceSignals']['signal_machine']):
+            signal_machine=snapshot['userDeviceSignals']['signal_machine']
+            if(signal_machine=='on'):
+                #print('\nengine on')
+                GPIO.output(Relay_channel[3], GPIO.LOW)
+                
+                #do here whatever you want for signal 4 on
+            else:
+                #print('\nengine off')
+                GPIO.output(Relay_channel[3], GPIO.HIGH)
+    
+                #do here whatever you want for signal 4 off
+
+        if(signal_door!=snapshot['userDeviceSignals']['signal_door']):
+            signal_door=snapshot['userDeviceSignals']['signal_door']
+            if(signal_door=='on'):
+                #print('\ndoor on')
+                GPIO.output(Relay_channel[4], GPIO.LOW)
+
+                #do here whatever you want for signal 5 on
+            else:
+                #print('\ndoor off')
+                GPIO.output(Relay_channel[4], GPIO.HIGH)
+
+                #do here whatever you want for signal 5 off
+
+        if(signal_wiper!=snapshot['userDeviceSignals']['signal_wiper']):
+            signal_wiper=snapshot['userDeviceSignals']['signal_wiper']
+            if(signal_wiper=='on'):
+                #print('\nwiper on')
+                GPIO.output(Relay_channel[5], GPIO.LOW)
+
+                #do here whatever you want for signal 6 on
+            else:
+                #print('\nwiper off')
+                GPIO.output(Relay_channel[5], GPIO.HIGH)
+
+                #do here whatever you want for signal 6 off
+
+        if(signal_fuel!=snapshot['userDeviceSignals']['signal_fuel']):
+            signal_fuel=snapshot['userDeviceSignals']['signal_fuel']
+            if(signal_fuel=='on'):
+                #print('\nfuel on')
+                GPIO.output(Relay_channel[6], GPIO.HIGH) #Reversing
+
+                #do here whatever you want for signal 7 on
+            else:
+                #print('\nfuel off')
+                GPIO.output(Relay_channel[6], GPIO.LOW)
+
+                #do here whatever you want for signal 7 off
+
+        if(signal_indicator!=snapshot['userDeviceSignals']['signal_indicator']):
+            signal_indicator=snapshot['userDeviceSignals']['signal_indicator']
+            if(signal_indicator=='on'):
+                #print('\nindicator on')
+                GPIO.output(Relay_channel[7], GPIO.LOW)
+
+                #do here whatever you want for signal 8 on
+            else:
+                #print('\nindicator off')
+                GPIO.output(Relay_channel[7], GPIO.HIGH)
+
+                #do here whatever you want for signal 8 off
+
+        if(videos_url!=snapshot['userDeviceSignals']['videos_url']):
+            videos_url=snapshot['userDeviceSignals']['videos_url']
+        
+            
+    #print('\n\n\t{0}'.format(snapshot['userDeviceSignals']['signal_1']))
+    #print('\n\n\t{0}'.format(snapshot['userDeviceSignals']['signal_2']))
+    #print('\n\n\t{0}'.format(snapshot['userDeviceSignals']['signal_3']))
+    #print('\n\n\t{0}'.format(snapshot['userDeviceSignals']['signal_4']))
+    #print('\n\n\t{0}'.format(snapshot['userDeviceSignals']['signal_5']))
+    #print('\n\n\t{0}'.format(snapshot['userDeviceSignals']['signal_6']))
+    #print('\n\n\t{0}'.format(snapshot['userDeviceSignals']['signal_7']))
+    #print('\n\n\t{0}'.format(snapshot['userDeviceSignals']['signal_8']))
+    #print('\n\n\t{0}'.format(snapshot['userDeviceSignals']['videos_url']))
+
+
+
+ref = db.reference('USERS/'+primaryKey).listen(listener)
+os.system('python alltime.py')
+#root.mainloop()
+    
